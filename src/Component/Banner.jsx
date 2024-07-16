@@ -9,7 +9,7 @@ const Banner = () => {
           20% DISCOUNT FOR 1 MONTH ACCOUNT Next generation Payment Ways.
         </p>
         <h5>AL Amin Parvaz</h5>
-        <div className="flex items-center gap-4 mt-4 px-3 py-[6px] text-[#00040F] font-bold rounded-full bg-white">
+        <div className="flex items-center gap-4 mt-4 px-4 py-[6px] text-[#00040F] font-bold rounded-full bg-white">
           <img className="w-6" src="/logo.webp" alt="" />
           <h6 className="tracking-tighter ">4000 Tk</h6>
         </div>
