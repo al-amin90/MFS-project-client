@@ -2,16 +2,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
-// import loginImg from "../../assets/authImgs/login.png";
 import { toast } from "react-hot-toast";
-// import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
-// import useAuth from "../../Hooks/useAuth";
 import { SiSpinrilla } from "react-icons/si";
-// import { saveUser } from "../../api/utlils";
+import { axiosPublic } from "../../Hooks/useAxiosPublic";
 
 const Login = () => {
-  //   const { user, loading, logInUser, setLoading } = useAuth();
   const loading = false;
   const [isShowed, setIsShowed] = useState(true);
   const navigate = useNavigate();
@@ -25,11 +21,20 @@ const Login = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    //   sing in
     console.log(data);
+    const { data: result } = await axiosPublic.post("/login", data);
+    console.log(result);
+
+    if (result.result === true) {
+      toast.success("Login successfully");
+      navigate("/");
+      return;
+    } else {
+      toast.error(result.result);
+    }
+
     try {
     } catch (err) {
-      //   console.log(err);
       toast.error(err.message);
       console.log(err);
     }
@@ -37,10 +42,6 @@ const Login = () => {
 
   return (
     <div>
-      {/* <Helmet>
-        <title> novaNews || Register</title>
-      </Helmet> */}
-
       <div className="max-w-[1920px] h-screen pt-16 md:pt-28 mx-auto md:w-[85%] pb-10">
         <div className=" rounded-3xl lg:shadow ">
           <div className="w-full justify-center items-center flex-col lg:flex-row flex">
@@ -59,30 +60,18 @@ const Login = () => {
                   <div>
                     <fieldset className="border bg-[#101011] border-solid border-[#5B5A5A] p-3 w-full rounded-md">
                       <input
-                        type="number"
-                        name="number"
-                        {...register("number", {
+                        type="email"
+                        name="email"
+                        {...register("email", {
                           required: true,
-                          maxLength: 11,
-                          minLength: 11,
                         })}
-                        id="number"
-                        placeholder="Phone Number"
+                        id="email"
+                        placeholder="Your Email"
                         className="px-4 py-1 bg-[#101011] text-white w-full focus:outline-0"
                       />
                     </fieldset>
-                    {errors.number?.type === "required" && (
-                      <span className="text-red-600">Number is required</span>
-                    )}
-                    {errors.number?.type === "maxLength" && (
-                      <span className="text-red-600">
-                        Max Number Digit must be 11
-                      </span>
-                    )}
-                    {errors.number?.type === "minLength" && (
-                      <span className="text-red-600">
-                        Must be Number Digit 11
-                      </span>
+                    {errors.email?.type === "required" && (
+                      <span className="text-red-600">Email is required</span>
                     )}
                   </div>
                   <div>

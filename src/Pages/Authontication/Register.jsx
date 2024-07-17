@@ -2,21 +2,18 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
-// import loginImg from "../../assets/authImgs/login.png";
 import { toast } from "react-hot-toast";
-// import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
-// import useAuth from "../../Hooks/useAuth";
-import { SiSpinrilla } from "react-icons/si";
-// import { saveUser } from "../../api/utlils";
+import useAxiosPublic from "../../Hooks/useAxiosPublic";
 
 const Register = () => {
-  //   const { user, loading, logInUser, setLoading } = useAuth();
   const loading = false;
   const [isShowed, setIsShowed] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
   const from = location?.state || "/";
+
+  const axiosPublic = useAxiosPublic();
 
   const {
     register,
@@ -25,9 +22,22 @@ const Register = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    //   sing in
     console.log(data);
+
     try {
+      // user sing in
+      const { data: result } = await axiosPublic.post("/users", {
+        ...data,
+        money: 40,
+      });
+      console.log(result);
+
+      if (result.acknowledged) {
+        toast.success("Register successfully");
+        navigate("/");
+      } else if (result.result) {
+        toast.error(result.result);
+      }
     } catch (err) {
       //   console.log(err);
       toast.error(err.message);
@@ -59,8 +69,6 @@ const Register = () => {
                         name="name"
                         {...register("name", {
                           required: true,
-                          maxLength: 11,
-                          minLength: 11,
                         })}
                         id="name"
                         placeholder="Enter name"
@@ -114,7 +122,7 @@ const Register = () => {
                     )}
                     {errors.number?.type === "minLength" && (
                       <span className="text-red-600">
-                        Must be Number Digit 11
+                        Number length must be 11
                       </span>
                     )}
                   </div>
@@ -126,6 +134,7 @@ const Register = () => {
                         maxLength={5}
                         id="password"
                         {...register("password", {
+                          minLength: 5,
                           required: true,
                           pattern: /^\d+$/,
                         })}
@@ -151,8 +160,43 @@ const Register = () => {
                         5-digit PIN must be number
                       </span>
                     )}
+                    {errors.password?.type === "minLength" && (
+                      <span className="text-red-600">
+                        5-digit PIN must be number
+                      </span>
+                    )}
                   </div>
 
+                  <div className="flex items-center justify-between">
+                    <h5 className="text-white">Your Account type -</h5>
+                    <div className="flex gap-4 ">
+                      <div className="form-control">
+                        <label className="label cursor-pointer">
+                          <span className="text-white mr-2">User</span>
+                          <input
+                            {...register("userRole", { required: true })}
+                            type="radio"
+                            value="user"
+                            name="userRole"
+                            className="radio radio-accent"
+                            defaultChecked
+                          />
+                        </label>
+                      </div>
+                      <div className="form-control">
+                        <label className="label cursor-pointer">
+                          <span className="text-white mr-2">Agent</span>
+                          <input
+                            {...register("userRole", { required: true })}
+                            type="radio"
+                            value="agent"
+                            name="userRole"
+                            className="radio radio-accent"
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
                   <button
                     type="submit"
                     className="py-4 w-full px-5 text-lg text-white bg-[#33BBCF] rounded-xl hover:shadow-xl font-semibold"
